@@ -1,0 +1,143 @@
+# ============================================
+# Root .gitignore for Uber Microservices Project
+# ============================================
+
+# ============================================
+# Java / Maven
+# ============================================
+**/target/
+*.class
+*.jar
+!**/src/main/resources/*.jar
+*.war
+*.ear
+*.nar
+*.zip
+*.tar.gz
+*.rar
+
+# Maven specific
+.mvn/
+**/mvnw
+**/mvnw.cmd
+**/HELP.md
+
+# Build and compilation artifacts
+**/generated-sources/
+**/generated-test-sources/
+**/maven-status/
+**/maven-archiver/
+**/surefire-reports/
+**/*.original
+
+# ============================================
+# Node.js / Frontend
+# ============================================
+**/node_modules/
+**/dist/
+**/build/
+**/.vite/
+**/coverage/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ============================================
+# IDE and Editor Files
+# ============================================
+# Visual Studio Code
+.vscode/
+!.vscode/tasks.json
+!.vscode/launch.json
+*.code-workspace
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Eclipse
+.project
+.classpath
+.settings/
+bin/
+
+# NetBeans
+nbproject/
+nbbuild/
+nbdist/
+.nb-gradle/
+
+# ============================================
+# Operating System Files
+# ============================================
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.stackdump
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Linux
+*~
+.directory
+
+# ============================================
+# Docker
+# ============================================
+# Keep docker-compose.yml but ignore logs
+**/docker-compose.override.yml
+**/.docker/
+
+# ============================================
+# Database
+# ============================================
+*.sql.backup
+*.dump
+
+# ============================================
+# Logs and Temporary Files
+# ============================================
+*.log
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+.backup/
+logs/
+
+# ============================================
+# Environment Variables
+# ============================================
+.env
+.env.local
+.env.*.local
+**/.env
+
+# ============================================
+# Test Coverage and Reports
+# ============================================
+**/test-results/
+**/coverage/
+*.lcov
+
+# ============================================
+# Misc
+# ============================================
+*.pid
+*.seed
+*.pid.lock
+.cache/
