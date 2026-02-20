@@ -1,15 +1,27 @@
-import { Clock, MapPin } from 'lucide-react'
+import { Clock, MapPin, RefreshCw } from 'lucide-react'
 import { useRide } from '../../context/RideContext'
+import { useState } from 'react'
 import Card from '../shared/Card'
 import StatusBadge from '../shared/StatusBadge'
+import Button from '../shared/Button'
 import { mapBackendToUIStatus, formatCurrency, formatDateTime } from '../../utils/helpers'
 
 const CompletedRides = () => {
-  const { rideHistory } = useRide()
+  const { rideHistory, fetchRideHistory } = useRide()
+  const [refreshing, setRefreshing] = useState(false)
 
   const completedRides = rideHistory.filter(
     ride => ride.status === 'COMPLETED' || ride.status === 'PAID'
   )
+
+  const handleRefresh = async () => {
+    setRefreshing(true)
+    try {
+      await fetchRideHistory()
+    } finally {
+      setRefreshing(false)
+    }
+  }
 
   if (completedRides.length === 0) {
     return (
@@ -18,6 +30,9 @@ const CompletedRides = () => {
           <Clock className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
           <p className="text-sm text-gray-500 dark:text-gray-400">
             No completed rides yet
+          </p>
+          <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
+            Your completed rides will appear here
           </p>
         </div>
       </Card>
@@ -28,6 +43,17 @@ const CompletedRides = () => {
     <Card 
       title="Completed Rides" 
       subtitle={`${completedRides.length} total`}
+      action={
+        <Button 
+          onClick={handleRefresh} 
+          size="sm" 
+          variant="ghost"
+          loading={refreshing}
+          className="!p-2"
+        >
+          <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+        </Button>
+      }
     >
       <div className="space-y-3 max-h-96 overflow-y-auto">
         {completedRides.slice().reverse().map((ride) => {

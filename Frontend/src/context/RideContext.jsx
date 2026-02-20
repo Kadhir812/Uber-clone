@@ -136,6 +136,9 @@ export const RideProvider = ({ children }) => {
       // Clear current ride if completed
       localStorage.removeItem('currentRideId')
       
+      // Refresh ride history to show the completed ride
+      await fetchRideHistory()
+      
       return updatedRide
     } catch (err) {
       setError(err.message)
@@ -157,6 +160,8 @@ export const RideProvider = ({ children }) => {
       // Clear current ride if completed or cancelled
       if (['COMPLETED', 'CANCELLED', 'PAID'].includes(status)) {
         localStorage.removeItem('currentRideId')
+        // Refresh ride history to show the completed ride
+        await fetchRideHistory()
       }
       
       return updatedRide
