@@ -241,7 +241,16 @@ jobs:
           docker tag ${{ secrets.DOCKERHUB_USERNAME }}/uber-matching-service:${{ env.TAG }} ${{ secrets.DOCKERHUB_USERNAME }}/uber-matching-service:latest
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/uber-matching-service:${{ env.TAG }}
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/uber-matching-service:latest
-          echo "✅ matching-service:${{ env.TAG }} pushed to Docker Hub"
+          echo " matching-service:${{ env.TAG }} pushed to Docker Hub"
+
+      - name: Build and push frontend
+        working-directory: Frontend
+        run: |
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/uber-frontend:${{ env.TAG }} .
+          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/uber-frontend:${{ env.TAG }} ${{ secrets.DOCKERHUB_USERNAME }}/uber-frontend:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/uber-frontend:${{ env.TAG }}
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/uber-frontend:latest
+          echo "✅ frontend:${{ env.TAG }} pushed to Docker Hub"
 
       - name: Docker Hub deployment summary
         run: |
@@ -254,12 +263,14 @@ jobs:
           echo "  - ${{ secrets.DOCKERHUB_USERNAME }}/uber-ride-service:${{ env.TAG }}"
           echo "  - ${{ secrets.DOCKERHUB_USERNAME }}/uber-driver-service:${{ env.TAG }}"
           echo "  - ${{ secrets.DOCKERHUB_USERNAME }}/uber-matching-service:${{ env.TAG }}"
+          echo "  - ${{ secrets.DOCKERHUB_USERNAME }}/uber-frontend:${{ env.TAG }}"
           echo "  - [All services also tagged as :latest]"
           echo ""
           echo "🚀 To pull and run on your local machine:"
           echo "  docker pull ${{ secrets.DOCKERHUB_USERNAME }}/uber-ride-service:${{ env.TAG }}"
           echo "  docker pull ${{ secrets.DOCKERHUB_USERNAME }}/uber-driver-service:${{ env.TAG }}"
           echo "  docker pull ${{ secrets.DOCKERHUB_USERNAME }}/uber-matching-service:${{ env.TAG }}"
+          echo "  docker pull ${{ secrets.DOCKERHUB_USERNAME }}/uber-frontend:${{ env.TAG }}"
           echo ""
           echo "Or pull latest versions:"
           echo "  docker compose pull"
@@ -273,6 +284,9 @@ jobs:
     runs-on: self-hosted
     needs: [build-push-docker]
     if: github.event_name == 'push'
+    defaults:
+      run:
+        shell: powershell
     
     steps:
       - name: Checkout code
@@ -284,12 +298,14 @@ jobs:
           docker pull ${{ secrets.DOCKERHUB_USERNAME }}/uber-ride-service:latest
           docker pull ${{ secrets.DOCKERHUB_USERNAME }}/uber-driver-service:latest
           docker pull ${{ secrets.DOCKERHUB_USERNAME }}/uber-matching-service:latest
+          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/uber-frontend:latest
           echo "All images pulled successfully"
 
       - name: Stop existing containers
         run: |
           echo "Stopping existing containers..."
-          docker compose down || echo "No containers to stop"
+          docker compose down
+          if ($LASTEXITCODE -ne 0) { echo "No containers to stop" }
           echo "Cleanup completed"
 
       - name: Start services with docker compose
@@ -368,7 +384,7 @@ jobs:
           echo "  - Ride Service: http://localhost:8081"
           echo "  - Driver Service: http://localhost:8082"
           echo "  - Matching Service: http://localhost:8083"
-          echo "  - Frontend: http://localhost:5173"
+          echo "  - Frontend: http://localhost"
           echo "  - PostgreSQL: localhost:5432"
           echo "  - Kafka: localhost:9092"
           echo "======================================"
