@@ -280,34 +280,34 @@ jobs:
 
       - name: Pull latest images from Docker Hub
         run: |
-          echo "📥 Pulling latest images from Docker Hub..."
+          echo "Pulling latest images from Docker Hub..."
           docker pull ${{ secrets.DOCKERHUB_USERNAME }}/uber-ride-service:latest
           docker pull ${{ secrets.DOCKERHUB_USERNAME }}/uber-driver-service:latest
           docker pull ${{ secrets.DOCKERHUB_USERNAME }}/uber-matching-service:latest
-          echo "✅ All images pulled successfully"
+          echo "All images pulled successfully"
 
       - name: Stop existing containers
         run: |
-          echo "🛑 Stopping existing containers..."
-          docker compose down || echo "⚠️ No containers to stop"
-          echo "✅ Cleanup completed"
+          echo "Stopping existing containers..."
+          docker compose down || echo "No containers to stop"
+          echo "Cleanup completed"
 
       - name: Start services with docker compose
         run: |
-          echo "🚀 Starting all services..."
+          echo "Starting all services..."
           docker compose up -d
-          echo "⏳ Waiting for services to initialize..."
+          echo "Waiting for services to initialize..."
           Start-Sleep -Seconds 30
 
       - name: Check container status
         run: |
-          echo "📊 Container Status:"
+          echo "Container Status:"
           docker ps --format "table {{.Names}}`t{{.Status}}`t{{.Ports}}"
-          echo "✅ All containers are running"
+          echo "All containers are running"
 
       - name: Health check - Services
         run: |
-          echo "🏥 Checking service health..."
+          echo "Checking service health..."
           
           # Ride Service
           $maxRetries = 30
@@ -316,7 +316,7 @@ jobs:
             try {
               $response = Invoke-WebRequest -Uri "http://localhost:8081/actuator/health" -UseBasicParsing -TimeoutSec 2
               if ($response.StatusCode -eq 200) {
-                echo "✅ Ride service is healthy"
+                echo "Ride service is healthy"
                 break
               }
             } catch {
@@ -331,7 +331,7 @@ jobs:
             try {
               $response = Invoke-WebRequest -Uri "http://localhost:8082/actuator/health" -UseBasicParsing -TimeoutSec 2
               if ($response.StatusCode -eq 200) {
-                echo "✅ Driver service is healthy"
+                echo "Driver service is healthy"
                 break
               }
             } catch {
@@ -346,7 +346,7 @@ jobs:
             try {
               $response = Invoke-WebRequest -Uri "http://localhost:8083/actuator/health" -UseBasicParsing -TimeoutSec 2
               if ($response.StatusCode -eq 200) {
-                echo "✅ Matching service is healthy"
+                echo "Matching service is healthy"
                 break
               }
             } catch {
@@ -355,16 +355,16 @@ jobs:
             }
           }
           
-          echo "✅ Health checks completed"
+          echo "Health checks completed"
         continue-on-error: true
 
       - name: Deployment summary
         run: |
           echo "======================================"
-          echo "🎉 Local Deployment Successful!"
+          echo "Local Deployment Successful!"
           echo "======================================"
-          echo "📦 Version: v${{ github.run_number }}"
-          echo "🌐 Services available at:"
+          echo "Version: v${{ github.run_number }}"
+          echo "Services available at:"
           echo "  - Ride Service: http://localhost:8081"
           echo "  - Driver Service: http://localhost:8082"
           echo "  - Matching Service: http://localhost:8083"
@@ -376,9 +376,9 @@ jobs:
       - name: Cleanup on failure
         if: failure()
         run: |
-          echo "❌ Deployment failed - rolling back..."
+          echo "Deployment failed - rolling back..."
           docker compose down
-          echo "🧹 Cleanup completed"
+          echo "Cleanup completed"
 
   # ============================================
   # Job 6: Pipeline Summary
