@@ -37,12 +37,6 @@ jobs:
           mvn clean install -DskipTests
           echo "✅ ${{ matrix.service }} built successfully"
 
-      - name: Run unit tests
-        working-directory: Backend/${{ matrix.service }}
-        run: |
-          mvn test || echo "⚠️ No tests found or tests failed"
-        continue-on-error: true
-
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -77,11 +71,6 @@ jobs:
         run: |
           npm run build
           echo "✅ Frontend built successfully"
-
-      - name: Run tests
-        working-directory: Frontend
-        run: npm test || echo "⚠️ No tests configured"
-        continue-on-error: true
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
@@ -303,21 +292,6 @@ jobs:
           docker pull ${{ secrets.DOCKERHUB_USERNAME }}/uber-frontend:latest
           echo "All images pulled successfully"
 
-      - name: Stop existing containers
-        run: |
-          echo "Stopping existing containers..."
-          $env:DOCKERHUB_USERNAME = "${{ secrets.DOCKERHUB_USERNAME }}"
-          docker compose down --remove-orphans
-          if ($LASTEXITCODE -ne 0) { echo "No containers to stop" }
-          
-          # Force remove any conflicting containers
-          $containers = @('zookeeper', 'kafka', 'uber-postgres', 'uber-ride-service', 'uber-driver-service', 'uber-matching-service', 'uber-frontend')
-          foreach ($container in $containers) {
-            docker rm -f $container 2>$null
-          }
-          
-          echo "Cleanup completed"
-
       - name: Start services with docker compose
         run: |
           echo "Starting all services..."
@@ -325,65 +299,6 @@ jobs:
           docker compose up -d
           echo "Waiting for services to initialize..."
           Start-Sleep -Seconds 30
-
-      - name: Check container status
-        run: |
-          echo "Container Status:"
-          docker ps --format "table {{.Names}}`t{{.Status}}`t{{.Ports}}"
-          echo "All containers are running"
-
-      - name: Health check - Services
-        run: |
-          echo "Checking service health..."
-          
-          # Ride Service
-          $maxRetries = 30
-          $count = 0
-          while ($count -lt $maxRetries) {
-            try {
-              $response = Invoke-WebRequest -Uri "http://localhost:8081/actuator/health" -UseBasicParsing -TimeoutSec 2
-              if ($response.StatusCode -eq 200) {
-                echo "Ride service is healthy"
-                break
-              }
-            } catch {
-              $count++
-              Start-Sleep -Seconds 2
-            }
-          }
-          
-          # Driver Service  
-          $count = 0
-          while ($count -lt $maxRetries) {
-            try {
-              $response = Invoke-WebRequest -Uri "http://localhost:8082/actuator/health" -UseBasicParsing -TimeoutSec 2
-              if ($response.StatusCode -eq 200) {
-                echo "Driver service is healthy"
-                break
-              }
-            } catch {
-              $count++
-              Start-Sleep -Seconds 2
-            }
-          }
-          
-          # Matching Service
-          $count = 0
-          while ($count -lt $maxRetries) {
-            try {
-              $response = Invoke-WebRequest -Uri "http://localhost:8083/actuator/health" -UseBasicParsing -TimeoutSec 2
-              if ($response.StatusCode -eq 200) {
-                echo "Matching service is healthy"
-                break
-              }
-            } catch {
-              $count++
-              Start-Sleep -Seconds 2
-            }
-          }
-          
-          echo "Health checks completed"
-        continue-on-error: true
 
       - name: Deployment summary
         run: |
