@@ -1,0 +1,124 @@
+version: 2
+updates:
+  # ============================================
+  # Backend - Ride Service
+  # ============================================
+  - package-ecosystem: "maven"
+    directory: "/Backend/ride-service"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "backend"
+      - "ride-service"
+    commit-message:
+      prefix: "chore(deps)"
+
+  # ============================================
+  # Backend - Driver Service
+  # ============================================
+  - package-ecosystem: "maven"
+    directory: "/Backend/driver-service"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "backend"
+      - "driver-service"
+    commit-message:
+      prefix: "chore(deps)"
+
+  # ============================================
+  # Backend - Matching Service
+  # ============================================
+  - package-ecosystem: "maven"
+    directory: "/Backend/matching-service"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "backend"
+      - "matching-service"
+    commit-message:
+      prefix: "chore(deps)"
+
+  # ============================================
+  # Frontend
+  # ============================================
+  - package-ecosystem: "npm"
+    directory: "/Frontend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "frontend"
+    commit-message:
+      prefix: "chore(deps)"
+    versioning-strategy: increase
+
+  # ============================================
+  # GitHub Actions
+  # ============================================
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "chore(deps)"
+
+  # ============================================
+  # Docker
+  # ============================================
+  - package-ecosystem: "docker"
+    directory: "/Backend/ride-service"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    labels:
+      - "dependencies"
+      - "docker"
+    commit-message:
+      prefix: "chore(deps)"
+
+  - package-ecosystem: "docker"
+    directory: "/Backend/driver-service"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    labels:
+      - "dependencies"
+      - "docker"
+    commit-message:
+      prefix: "chore(deps)"
+
+  - package-ecosystem: "docker"
+    directory: "/Backend/matching-service"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    labels:
+      - "dependencies"
+      - "docker"
+    commit-message:
+      prefix: "chore(deps)"
