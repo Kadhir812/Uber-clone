@@ -122,7 +122,7 @@ jobs:
         working-directory: Backend/ride-service
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL || 'https://sonarcloud.io' }}
         run: |
           mvn clean verify sonar:sonar \
             -Dsonar.projectKey=uber-ride-service \
@@ -135,7 +135,7 @@ jobs:
         working-directory: Backend/driver-service
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL || 'https://sonarcloud.io' }}
         run: |
           mvn clean verify sonar:sonar \
             -Dsonar.projectKey=uber-driver-service \
@@ -148,7 +148,7 @@ jobs:
         working-directory: Backend/matching-service
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL || 'https://sonarcloud.io' }}
         run: |
           mvn clean verify sonar:sonar \
             -Dsonar.projectKey=uber-matching-service \
@@ -170,7 +170,7 @@ jobs:
         working-directory: Frontend
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL || 'https://sonarcloud.io' }}
         run: |
           npx sonar-scanner \
             -Dsonar.projectKey=uber-frontend \
