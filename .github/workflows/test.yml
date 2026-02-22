@@ -106,7 +106,7 @@ jobs:
 
       - name: Validate Docker Compose
         run: |
-          docker-compose config
+          docker compose config
           echo "✅ docker-compose.yml is valid"
 
       - name: Check for common issues

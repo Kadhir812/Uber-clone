@@ -262,7 +262,7 @@ jobs:
           echo "  docker pull ${{ secrets.DOCKERHUB_USERNAME }}/uber-matching-service:${{ env.TAG }}"
           echo ""
           echo "Or pull latest versions:"
-          echo "  docker-compose pull"
+          echo "  docker compose pull"
           echo "====================================="
 
   # ============================================
@@ -289,13 +289,13 @@ jobs:
       - name: Stop existing containers
         run: |
           echo "🛑 Stopping existing containers..."
-          docker-compose down || echo "⚠️ No containers to stop"
+          docker compose down || echo "⚠️ No containers to stop"
           echo "✅ Cleanup completed"
 
-      - name: Start services with docker-compose
+      - name: Start services with docker compose
         run: |
           echo "🚀 Starting all services..."
-          docker-compose up -d
+          docker compose up -d
           echo "⏳ Waiting for services to initialize..."
           Start-Sleep -Seconds 30
 
@@ -377,7 +377,7 @@ jobs:
         if: failure()
         run: |
           echo "❌ Deployment failed - rolling back..."
-          docker-compose down
+          docker compose down
           echo "🧹 Cleanup completed"
 
   # ============================================
