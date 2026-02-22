@@ -307,8 +307,15 @@ jobs:
         run: |
           echo "Stopping existing containers..."
           $env:DOCKERHUB_USERNAME = "${{ secrets.DOCKERHUB_USERNAME }}"
-          docker compose down
+          docker compose down --remove-orphans
           if ($LASTEXITCODE -ne 0) { echo "No containers to stop" }
+          
+          # Force remove any conflicting containers
+          $containers = @('zookeeper', 'kafka', 'uber-postgres', 'uber-ride-service', 'uber-driver-service', 'uber-matching-service', 'uber-frontend')
+          foreach ($container in $containers) {
+            docker rm -f $container 2>$null
+          }
+          
           echo "Cleanup completed"
 
       - name: Start services with docker compose
