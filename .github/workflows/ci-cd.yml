@@ -284,6 +284,8 @@ jobs:
     runs-on: self-hosted
     needs: [build-push-docker]
     if: github.event_name == 'push'
+    env:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
     defaults:
       run:
         shell: powershell
@@ -304,6 +306,7 @@ jobs:
       - name: Stop existing containers
         run: |
           echo "Stopping existing containers..."
+          $env:DOCKERHUB_USERNAME = "${{ secrets.DOCKERHUB_USERNAME }}"
           docker compose down
           if ($LASTEXITCODE -ne 0) { echo "No containers to stop" }
           echo "Cleanup completed"
@@ -311,6 +314,7 @@ jobs:
       - name: Start services with docker compose
         run: |
           echo "Starting all services..."
+          $env:DOCKERHUB_USERNAME = "${{ secrets.DOCKERHUB_USERNAME }}"
           docker compose up -d
           echo "Waiting for services to initialize..."
           Start-Sleep -Seconds 30
