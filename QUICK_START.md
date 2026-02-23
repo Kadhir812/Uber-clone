@@ -19,7 +19,7 @@ Open PowerShell in the project root:
 # Navigate to project root
 cd "d:\New Folder\Uber"
 
-# Start Kafka, Zookeeper, PostgreSQL
+# Start Kafka (KRaft mode), PostgreSQL
 docker-compose up -d
 
 # Wait for containers to be healthy (about 30 seconds)
@@ -32,11 +32,11 @@ docker-compose ps
 Expected output:
 ```
 NAME              IMAGE                            STATUS
-uber-kafka        confluentinc/cp-kafka:7.6.0      Up (healthy)
+uber-kafka        confluentinc/cp-kafka:7.5.0      Up (healthy)
 uber-postgres     postgres:16-alpine               Up (healthy)
-uber-zookeeper    confluentinc/cp-zookeeper:7.6.0  Up (healthy)
-uber-kafka-ui     provectuslabs/kafka-ui:latest    Up
 ```
+
+**Note**: This project now uses Kafka with KRaft mode (no Zookeeper needed), which reduces CPU usage significantly.
 
 ---
 

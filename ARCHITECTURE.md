@@ -147,16 +147,6 @@ Kafka ──X──→ Frontend   ❌ NO DIRECT CONNECTION
   - `uber_driver_db` (driver-service)
   - `uber_matching_db` (matching-service)
 
-### Zookeeper Container
-- **Image**: `confluentinc/cp-zookeeper:7.6.0`
-- **Port**: 2181
-- **Purpose**: Kafka coordination
-
-### Kafka UI (Optional)
-- **Image**: `provectuslabs/kafka-ui:latest`
-- **Port**: 8090
-- **Purpose**: Monitor Kafka topics and messages
-
 ## 🚀 Startup Sequence
 
 ### 1. Start Infrastructure (Docker)
@@ -211,10 +201,10 @@ npm run dev
 | ride-service        | 8081  | HTTP     | Frontend           |
 | driver-service      | 8082  | HTTP     | Frontend           |
 | matching-service    | 8083  | HTTP     | (Internal only)    |
-| Kafka               | 9092  | TCP      | Services only      |
+| Kafka (Broker)      | 9092  | TCP      | Services only      |
+| Kafka (Controller)  | 9093  | TCP      | KRaft coordination |
+| Kafka (External)    | 29092 | TCP      | Host access        |
 | PostgreSQL          | 5432  | TCP      | Services only      |
-| Zookeeper           | 2181  | TCP      | Kafka only         |
-| Kafka UI            | 8090  | HTTP     | Browser (optional) |
 
 ## 📡 API Communication Matrix
 

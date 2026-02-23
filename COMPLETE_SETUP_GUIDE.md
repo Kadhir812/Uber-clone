@@ -34,23 +34,45 @@ Download from: https://kafka.apache.org/downloads
 
 Extract to `C:\kafka` (or any location)
 
+**Note**: This project now uses Docker with Kafka in KRaft mode (no Zookeeper needed). For Docker setup, see the Docker section below.
+
 ## Step-by-Step Startup
 
-### 1. Start Kafka Infrastructure
+### Option A: Using Docker (Recommended)
 
-#### Terminal 1: Start Zookeeper
+#### Start all services with Docker Compose
 ```powershell
-cd C:\kafka
-.\bin\windows\zookeeper-server-start.bat .\config\zookeeper.properties
+# Navigate to project root
+cd "d:\New Folder\Uber"
+
+# Start Kafka and PostgreSQL
+docker-compose up -d kafka postgres
+
+# Wait 30 seconds for Kafka to initialize
+Start-Sleep -Seconds 30
+
+# Start all services
+docker-compose up -d
 ```
 
-#### Terminal 2: Start Kafka Broker
+### Option B: Local Development (Manual Kafka)
+
+#### Terminal 1: Start Kafka in KRaft Mode (No Zookeeper)
 ```powershell
 cd C:\kafka
-.\bin\windows\kafka-server-start.bat .\config\server.properties
+
+# Generate a cluster ID (first time only)
+.\bin\windows\kafka-storage.bat random-uuid
+# Copy the UUID output
+
+# Format the storage directory (first time only)
+.\bin\windows\kafka-storage.bat format -t <YOUR-UUID> -c .\config\kraft\server.properties
+
+# Start Kafka in KRaft mode
+.\bin\windows\kafka-server-start.bat .\config\kraft\server.properties
 ```
 
-#### Terminal 3: Create Kafka Topics
+#### Terminal 2: Create Kafka Topics
 ```powershell
 cd C:\kafka
 
@@ -64,9 +86,11 @@ cd C:\kafka
 .\bin\windows\kafka-topics.bat --list --bootstrap-server localhost:9092
 ```
 
+**Note**: With Docker, topics are auto-created when services start.
+
 ### 2. Start Backend Services
 
-#### Terminal 4: Ride Service (Port 8081)
+#### Terminal 3: Ride Service (Port 8081)
 ```powershell
 cd "d:\New Folder\Uber\Backend\ride-service"
 mvn clean install
@@ -75,7 +99,7 @@ mvn spring-boot:run
 
 Wait for: `Tomcat started on port(s): 8081`
 
-#### Terminal 5: Matching Service (Port 8083)
+#### Terminal 4: Matching Service (Port 8083)
 ```powershell
 cd "d:\New Folder\Uber\Backend\matching-service"
 mvn clean install
@@ -84,7 +108,7 @@ mvn spring-boot:run
 
 Wait for: `Tomcat started on port(s): 8083`
 
-#### Terminal 6 (Optional): Driver Service (Port 8082)
+#### Terminal 5 (Optional): Driver Service (Port 8082)
 ```powershell
 cd "d:\New Folder\Uber\Backend\driver-service"
 mvn clean install
@@ -93,7 +117,7 @@ mvn spring-boot:run
 
 ### 3. Start Frontend
 
-#### Terminal 7: React Frontend (Port 3000)
+#### Terminal 6: React Frontend (Port 3000)
 ```powershell
 cd "d:\New Folder\Uber\frontend"
 npm install  # Only first time
@@ -222,7 +246,10 @@ Rider → [POST /api/rides] → Ride Service
 ## Troubleshooting
 
 ### Issue: "Connection refused" on Kafka
-**Solution**: Ensure Zookeeper and Kafka are running first
+**Solution**: 
+1. If using Docker: Ensure Kafka container is running (`docker ps`)
+2. If using local Kafka: Ensure Kafka is running in KRaft mode
+3. Wait 30-60 seconds for Kafka to fully initialize
 
 ### Issue: Ride stuck in REQUESTED status
 **Solution**: 
@@ -245,14 +272,15 @@ Rider → [POST /api/rides] → Ride Service
 
 ## Service URLs
 
-- **Frontend**: http://localhost:3000
+- **Frontend**: http://localhost:3000 (Docker: http://localhost:3000)
 - **Ride Service**: http://localhost:8081
   - Health: http://localhost:8081/actuator/health
   - API: http://localhost:8081/api/rides
 - **Matching Service**: http://localhost:8083
 - **Driver Service**: http://localhost:8082
-- **Kafka**: localhost:9092
-- **Zookeeper**: localhost:2181
+- **Kafka**: localhost:9092 (external), kafka:9092 (internal)
+- **Kafka Controller**: localhost:9093 (KRaft mode)
+- **PostgreSQL**: localhost:5432
 
 ## Quick Verification Commands
 
@@ -271,14 +299,23 @@ cd C:\kafka
 
 ## Shutdown Sequence
 
+### Docker Shutdown
+```powershell
+# Stop all services
+docker-compose down
+
+# Or stop and remove volumes
+docker-compose down -v
+```
+
+### Local Development Shutdown
 Shut down in reverse order:
 
-1. Stop Frontend (Ctrl+C in Terminal 7)
-2. Stop Driver Service (Ctrl+C in Terminal 6)
-3. Stop Matching Service (Ctrl+C in Terminal 5)
-4. Stop Ride Service (Ctrl+C in Terminal 4)
-5. Stop Kafka (Ctrl+C in Terminal 2)
-6. Stop Zookeeper (Ctrl+C in Terminal 1)
+1. Stop Frontend (Ctrl+C in Terminal 6)
+2. Stop Driver Service (Ctrl+C in Terminal 5)
+3. Stop Matching Service (Ctrl+C in Terminal 4)
+4. Stop Ride Service (Ctrl+C in Terminal 3)
+5. Stop Kafka (Ctrl+C in Terminal 1)
 
 ## Production Deployment Notes
 
