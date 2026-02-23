@@ -57,8 +57,8 @@ Before running the driver service, ensure you have:
 1. **Java 17** or higher installed
 2. **Maven 3.6+** for building the project
 3. **PostgreSQL** database running
-4. **Apache Kafka** and Zookeeper running
-5. **Kafka Topics** created:
+4. **Apache Kafka** (KRaft mode - no Zookeeper needed) running
+5. **Kafka Topics** created (auto-created if enabled):
    - `driver-events` (for receiving ride assignments)
    - `ride-events` (for publishing ride status updates)
 
@@ -378,14 +378,17 @@ psql -U postgres -c "\l"  # List databases
 ```
 
 ### Issue: Kafka connection errors
-**Solution**: Verify Kafka and Zookeeper are running:
+**Solution**: Verify Kafka is running (KRaft mode - no Zookeeper needed):
 
 ```bash
-# Check Zookeeper
-netstat -an | findstr 2181
-
-# Check Kafka
+# Check Kafka broker (port 9092)
 netstat -an | findstr 9092
+
+# Check Kafka controller (port 9093)
+netstat -an | findstr 9093
+
+# Or with Docker
+docker ps | findstr kafka
 ```
 
 ### Issue: Driver not receiving ride assignments

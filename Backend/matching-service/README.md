@@ -123,9 +123,9 @@ POST http://localhost:8082/api/drivers/{driverId}/assignments
 
 1. **Start services in order:**
    ```bash
-   # Terminal 1: Kafka
-   bin/zookeeper-server-start.sh config/zookeeper.properties
-   bin/kafka-server-start.sh config/server.properties
+   # Terminal 1: Kafka (KRaft mode - no Zookeeper needed)
+   # With Docker: docker-compose up -d kafka
+   # Or local: bin/kafka-server-start.sh config/kraft/server.properties
    
    # Terminal 2: Ride Service
    cd Backend/ride-service && mvn spring-boot:run
