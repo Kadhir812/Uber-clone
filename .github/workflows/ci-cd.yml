@@ -38,7 +38,7 @@ jobs:
           echo "✅ ${{ matrix.service }} built successfully"
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.service }}-jar
           path: Backend/${{ matrix.service }}/target/*.jar
@@ -73,7 +73,7 @@ jobs:
           echo "✅ Frontend built successfully"
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: frontend-dist
           path: Frontend/dist/
